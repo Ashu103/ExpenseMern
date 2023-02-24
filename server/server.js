@@ -1,10 +1,11 @@
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import router from "./routes/route.js";
+import dotenv from "dotenv";
 dotenv.config();
 
-import conn from "./db/connect.js";
+const conn = import("./db/connect.js");
+
 const app = express();
 
 const port = process.env.PORT;
