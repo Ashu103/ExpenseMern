@@ -1,30 +1,24 @@
 import React from "react";
-const obj = [
-  {
-    type: "Savings",
-    color: "#f9c74f",
-    percent: 45,
-  },
-  {
-    type: "Investment",
-    color: "#f9c74f",
-    percent: 20,
-  },
-  {
-    type: "Expense",
-    color: "rgb(54,162,235)",
-    percent: 10,
-  },
-];
+
+import { apiSlice } from "../store/apiSlice";
+import { getSum, getLabels } from "../helper/helper";
 
 export const Labels = () => {
-  return (
-    <>
-      {obj.map((v, i) => (
-        <LabelComponent key={i} data={v}></LabelComponent>
-      ))}
-    </>
-  );
+  const { data, isFetching, isSuccess, isError } = apiSlice.useGetLabelsQuery();
+
+  let Transactions;
+
+  if (isFetching) {
+    Transactions = <div>Fetching</div>;
+  } else if (isSuccess) {
+    Transactions = getLabels(data, "type").map((v, i) => (
+      <LabelComponent key={i} data={v}></LabelComponent>
+    ));
+  } else if (isError) {
+    Transactions = <div>Error</div>;
+  }
+
+  return <>{Transactions}</>;
 };
 
 function LabelComponent({ data }) {
@@ -38,7 +32,7 @@ function LabelComponent({ data }) {
         ></div>
         <h3 className="text-md">{data.type ?? ""}</h3>
       </div>
-      <h3 className="font-bold">{data.percent ?? 0}%</h3>
+      <h3 className="font-bold">{Math.round(data.percent) ?? 0}%</h3>
     </div>
   );
 }

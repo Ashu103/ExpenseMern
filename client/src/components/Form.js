@@ -1,23 +1,29 @@
 import React, { useState } from "react";
 import List from "./List";
+import { apiSlice } from "../store/apiSlice";
 
 const Form = () => {
   const expenses = {
-    transaction: "",
-    transactiontype: "",
+    name: "",
+    type: "",
     amount: 0,
   };
 
   const [myexpenses, setMyExpenses] = useState(expenses);
 
+  const [addTransaction] = apiSlice.useAddTransactionMutation();
+
   const handleChange = (e) => {
     setMyExpenses({ ...myexpenses, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(myexpenses);
-    setMyExpenses({ transaction: "", transactiontype: "", amount: 0 });
+    if (!myexpenses) return {};
+    //   console.log(myexpenses.transaction);
+    await addTransaction(myexpenses).unwrap();
+
+    setMyExpenses({ name: "", type: "", amount: 0 });
   };
 
   return (
@@ -28,17 +34,17 @@ const Form = () => {
           <div className="input-group">
             <input
               type="text"
-              name="transaction"
+              name="name"
               placeholder="Salary,House Rent,SIP "
               className="form-input"
               onChange={handleChange}
-              value={myexpenses.transaction}
+              value={myexpenses.name}
             />
           </div>
           <select
             className="form-input"
-            name="transactiontype"
-            value={myexpenses.transactiontype}
+            name="type"
+            value={myexpenses.type}
             onChange={handleChange}
           >
             <option value="investment" defaultValue>

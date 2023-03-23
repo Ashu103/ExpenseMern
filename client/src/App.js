@@ -1,6 +1,7 @@
 import "./App.css";
 import Graph from "./components/Graph";
 import Form from "./components/Form";
+import Table from "./components/StockTable";
 function App() {
   return (
     <div className="App">
@@ -8,7 +9,7 @@ function App() {
         <h1 className="text-4xl py-8 mb-10 bg-slate-800 text-white rounded">
           Expense Tracker
         </h1>
-
+        <Table />
         <div className="grid md:grid-cols-2 gap-4">
           <Graph />
           {/*Form */}

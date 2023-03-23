@@ -3,8 +3,8 @@ import { category, transaction } from "../models/model.js";
 //post  categories
 export const create_Categories = async (req, res) => {
   const create = new category({
-    type: "Investment",
-    color: "#FCBE44",
+    type: "Savings",
+    color: "#1F3B5C",
   });
 
   await create.save((err) => {
@@ -27,11 +27,11 @@ export const get_Categories = async (req, res) => {
 export const create_Transaction = async (req, res) => {
   if (!req.body) return res.status(400).json("Post HTTP Data not Provided");
 
-  let { name, type_id, amount } = req.body;
+  let { name, type, amount } = req.body;
 
   const create = await new transaction({
     name,
-    type_id,
+    type,
     amount,
     date: new Date(),
   });
@@ -66,18 +66,32 @@ export const get_Labels = async (req, res) => {
     const result = await transaction.aggregate([
       {
         $lookup: {
-          from: "category",
-          localField: "type_id",
-          foreignField: "type_id",
+          from: "categories",
+          localField: "type",
+          foreignField: "type",
           as: "category_info",
         },
       },
+
       {
         $unwind: "$category_info",
       },
     ]);
-    res.json(result);
+    //res.json(result);
+    let data = result.map((v) =>
+      Object.assign(
+        {},
+        {
+          _id: v._id,
+          name: v.name,
+          type: v.type,
+          amount: v.amount,
+          color: v.category_info.color,
+        }
+      )
+    );
+    res.json(data);
   } catch (error) {
-    res.status(400).json("Looup Collection Error");
+    res.status(400).json("Lookup Collection Error");
   }
 };
